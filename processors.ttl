@@ -1,0 +1,91 @@
+@prefix js: <https://w3id.org/conn/js#>.
+@prefix fno: <https://w3id.org/function/ontology#>.
+@prefix fnom: <https://w3id.org/function/vocabulary/mapping#>.
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
+@prefix : <https://w3id.org/conn#>.
+@prefix sh: <http://www.w3.org/ns/shacl#>.
+@prefix dc: <http://purl.org/dc/terms/>.
+
+js:XQueryProcessor a js:JsProcess;
+    js:file <./lib/XMLUtils.js>;
+    js:function "doXQuery";
+    js:location <./>;
+    js:mapping [
+        a fno:Mapping;
+        fno:parameterMapping [
+            a fnom:PositionParameterMapping;
+            fnom:functionParameter "xmlInput";
+            fnom:implementationParameterPosition "0"^^xsd:integer;
+        ], [
+            a fnom:PositionParameterMapping;
+            fnom:functionParameter "xqueries";
+            fnom:implementationParameterPosition "1"^^xsd:integer;
+        ], [
+            a fnom:PositionParameterMapping;
+            fnom:functionParameter "outputs";
+            fnom:implementationParameterPosition "2"^^xsd:integer;
+        ], [
+            a fnom:PositionParameterMapping;
+            fnom:functionParameter "saxonLocation";
+            fnom:implementationParameterPosition "3"^^xsd:integer;
+        ];
+    ].
+
+[ ] a sh:NodeShape;
+    sh:targetClass js:XQueryProcessor;
+    sh:property [
+        sh:path js:xmlInput;
+        sh:name "xmlInput";
+        sh:class :ReaderChannel;
+        sh:minCount 1;
+        sh:maxCount 1;
+    ], [
+        sh:path js:xquery;
+        sh:name "xqueries";
+        sh:class js:XQuery;
+        sh:minCount 1;
+    ], [
+        sh:path js:output;
+        sh:name "outputs";
+        sh:class js:XQueryOutput;
+        sh:minCount 1;
+    ], [
+        sh:path js:saxonLocation;
+        sh:name "saxonLocation";
+        sh:datatype xsd:string;
+        sh:minCount 0;
+        sh:maxCount 1;
+    ].
+
+[ ] a sh:NodeShape;
+    sh:targetClass js:XQuery;
+    sh:property [
+        sh:path js:name;
+        sh:datatype xsd:string;
+        sh:name "name";
+        sh:maxCount 1;
+        sh:minCount 1;
+    ], [
+        sh:path js:query;
+        sh:datatype xsd:string;
+        sh:name "query";
+        sh:maxCount 1;
+        sh:minCount 1;
+    ].
+
+[ ] a sh:NodeShape;
+    sh:targetClass js:XQueryOutput;
+    sh:property [
+        sh:path js:name;
+        sh:datatype xsd:string;
+        sh:name "name";
+        sh:maxCount 1;
+        sh:minCount 1;
+    ], [
+        sh:path js:outputStream;
+        sh:class :WriterChannel;
+        sh:name "stream";
+        sh:maxCount 1;
+        sh:minCount 1;
+    ].
+
