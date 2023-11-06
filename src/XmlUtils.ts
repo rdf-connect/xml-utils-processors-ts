@@ -7,29 +7,24 @@ const SAXON_HE_RELEASE = "https://github.com/Saxonica/Saxon-HE/releases/download
 
 export type XQuery = {
     name: string,
-    query: string
-};
-
-export type XQueryOutput = {
-    name: string,
-    stream: Writer<string>
+    query: string,
+    path: string,
+    result: Writer<string>
 };
 
 export async function doXQuery(
     source: Stream<string>,
     queries: XQuery[],
-    outputs: XQueryOutput[],
     saxonLocation?: string
 ) {
     const saxonEngine = await getEngine(saxonLocation, false, SAXON_HE_RELEASE);
     const uid = randomUUID();
 
     // Write queries to disk
-    const queryLocations: { name: string, path: string }[] = [];
     for (const q of queries) {
         const queryPath = `/tmp/xml-xquery-${uid}-${q.name}.xq`;
+        q.path = queryPath;
         await writeFile(queryPath, q.query, "utf8");
-        queryLocations.push({ name: q.name, path: queryPath });
     }
 
     // Register input stream listener
@@ -40,10 +35,10 @@ export async function doXQuery(
         await writeFile(inputPath, data, "utf8");
 
         // Execute all defined XQueries
-        for (const ql of queryLocations) {
-            console.log("[doXQuery processor]", "Running XQuery", ql.name);
-            const outputPath = `/tmp/xml-output-${uid}-${ql.name}.xml`;
-            const command = `java -cp ${saxonEngine} net.sf.saxon.Query -t -s:${inputPath} -q:${ql.path} -o:${outputPath}`;
+        for (const q of queries) {
+            console.log("[doXQuery processor]", "Running XQuery", q.name);
+            const outputPath = `/tmp/xml-output-${uid}-${q.name}.xml`;
+            const command = `java -cp ${saxonEngine} net.sf.saxon.Query -t -s:${inputPath} -q:${q.path} -o:${outputPath}`;
             
             const t0 = new Date();
             const proc = exec(command);
@@ -54,15 +49,10 @@ export async function doXQuery(
                 console.error("[doXQuery processor]", "saxon engine err:", data.toString());
             });
             await new Promise((res) => proc.on("exit", res));
-            console.log(`Completed XQuery execution for ${ql.name} in ${new Date().getTime() - t0.getTime()}`);
-
-            const outStream = outputs.find(o => o.name === ql.name);
-            if(outStream) {
-                // Push result data downstream
-                await outStream.stream.push(await readFile(outputPath, "utf8"));
-            } else {
-                throw new Error(`No corresponding output stream found for XQuery ${ql.name}`);
-            }
+            console.log(`Completed XQuery execution for ${q.name} in ${new Date().getTime() - t0.getTime()} ms`);
+            
+            // Push result data downstream
+            q.result.push(await readFile(outputPath, "utf8"));
         }
     });
 

@@ -29,10 +29,7 @@ describe("Tests for XML-related processors", async () => {
                 js:xmlInput <jr>;
                 js:xquery [
                     js:name "Q1";
-                    js:query "<Some XQuery>"
-                ];
-                js:output [
-                    js:name "Q1";
+                    js:query "<Some XQuery>";
                     js:outputStream <jw>
                 ];
                 js:saxonLocation <./SaxonHE12-3J.zip>.
@@ -51,15 +48,14 @@ describe("Tests for XML-related processors", async () => {
 
         const argss = extractSteps(env, quads, config);
         expect(argss.length).toBe(1);
-        expect(argss[0].length).toBe(4);
+        expect(argss[0].length).toBe(3);
 
-        const [[xmlInput, xqueries, outputs, saxon]] = argss;
+        const [[xmlInput, xqueries, saxon]] = argss;
         
         testReader(xmlInput);
         expect(xqueries[0].name).toBe("Q1");
         expect(xqueries[0].query).toBe("<Some XQuery>");
-        expect(outputs[0].name).toBe("Q1");
-        testWriter(outputs[0].stream);
+        testWriter(xqueries[0].result);
         
         expect(saxon).toBe(resolve("./SaxonHE12-3J.zip"));
 

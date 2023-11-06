@@ -22,12 +22,8 @@ js:XQueryProcessor a js:JsProcess;
             fnom:implementationParameterPosition "1"^^xsd:integer;
         ], [
             a fnom:PositionParameterMapping;
-            fnom:functionParameter "outputs";
-            fnom:implementationParameterPosition "2"^^xsd:integer;
-        ], [
-            a fnom:PositionParameterMapping;
             fnom:functionParameter "saxonLocation";
-            fnom:implementationParameterPosition "3"^^xsd:integer;
+            fnom:implementationParameterPosition "2"^^xsd:integer;
         ];
     ].
 
@@ -43,11 +39,6 @@ js:XQueryProcessor a js:JsProcess;
         sh:path js:xquery;
         sh:name "xqueries";
         sh:class js:XQuery;
-        sh:minCount 1;
-    ], [
-        sh:path js:output;
-        sh:name "outputs";
-        sh:class js:XQueryOutput;
         sh:minCount 1;
     ], [
         sh:path js:saxonLocation;
@@ -71,21 +62,10 @@ js:XQueryProcessor a js:JsProcess;
         sh:name "query";
         sh:maxCount 1;
         sh:minCount 1;
-    ].
-
-[ ] a sh:NodeShape;
-    sh:targetClass js:XQueryOutput;
-    sh:property [
-        sh:path js:name;
-        sh:datatype xsd:string;
-        sh:name "name";
-        sh:maxCount 1;
-        sh:minCount 1;
     ], [
         sh:path js:outputStream;
         sh:class :WriterChannel;
-        sh:name "stream";
+        sh:name "result";
         sh:maxCount 1;
         sh:minCount 1;
     ].
-

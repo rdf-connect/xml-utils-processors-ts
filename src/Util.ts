@@ -27,11 +27,10 @@ export async function getEngine(mLocation: string | undefined, offline: boolean,
     if (!saxonPromise) {
         saxonPromise = (async function () {
             const cmd = `wget ${url} -O ${location}`;
-            console.log("Executing $", cmd)
+            console.log("[doXQuery processor]", "Executing $", cmd)
             const proc = exec(cmd);
             await new Promise(res => proc.once("exit", res));
             mkdirSync(unzippedFolder);
-            console.log(location);
             await unzip(location, unzippedFolder);
             return normalize(unzippedFolder + `/saxon-he-${getJarVersion(location)}.jar`);
         })();

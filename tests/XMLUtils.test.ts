@@ -1,6 +1,6 @@
 import { describe, test, expect, afterAll } from "@jest/globals";
 import { SimpleStream } from "@ajuvercr/js-runner";
-import { XQuery, XQueryOutput, doXQuery } from "../src/XmlUtils";
+import { XQuery, doXQuery } from "../src/XmlUtils";
 import { deleteAsync } from "del";
 
 describe("Functional tests for the doXQuery Connector Architecture function", () => {
@@ -45,13 +45,9 @@ describe("Functional tests for the doXQuery Connector Architecture function", ()
         const queries: XQuery[] = [
             {
                 name: "query1",
-                query: XQUERY_1
-            }
-        ];
-        const outputs: XQueryOutput[] = [
-            {
-                name: "query1",
-                stream: output1
+                query: XQUERY_1,
+                result: output1,
+                path: ""
             }
         ];
 
@@ -60,7 +56,7 @@ describe("Functional tests for the doXQuery Connector Architecture function", ()
             expect(data.includes("<NewOP id=\"EU00001\">")).toBeTruthy();
         });
 
-        await doXQuery(source, queries, outputs);
+        await doXQuery(source, queries);
 
         // Push XML input
         await source.push(XML_INPUT);
@@ -72,12 +68,8 @@ describe("Functional tests for the doXQuery Connector Architecture function", ()
         const output2 = new SimpleStream<string>();
 
         const queries: XQuery[] = [
-            { name: "query1", query: XQUERY_1 },
-            { name: "query2", query: XQUERY_2 }
-        ];
-        const outputs: XQueryOutput[] = [
-            { name: "query1", stream: output1 },
-            { name: "query2", stream: output2 }
+            { name: "query1", query: XQUERY_1, result: output1, path: "" },
+            { name: "query2", query: XQUERY_2, result: output2, path: "" }
         ];
 
         output1.data(data => {
@@ -90,7 +82,7 @@ describe("Functional tests for the doXQuery Connector Architecture function", ()
             expect(data.includes("<NewOP2 id=\"EU00001\">")).toBeTruthy();
         });
 
-        await doXQuery(source, queries, outputs);
+        await doXQuery(source, queries);
 
         // Push XML input
         await source.push(XML_INPUT);
