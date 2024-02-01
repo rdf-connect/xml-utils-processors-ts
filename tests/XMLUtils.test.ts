@@ -17,6 +17,18 @@ describe("Functional tests for the doXQuery Connector Architecture function", ()
         </RINFData>
     `;
 
+    const XML_INPUT2 = `
+        <RINFData>
+            <MemberStateCode Code="BE" Version="1.0"/>
+            <OperationalPoint ValidityDateStart="2021-05-10" ValidityDateEnd="2026-12-31">
+                <OPName Value="Leuven"/>
+                <UniqueOPID Value="BE120353"/>
+                <OPTafTapCode IsApplicable="Y" Value="BE04738"/>
+                <OPType Value="20" OptionalValue="station"/>
+            </OperationalPoint>
+        </RINFData>
+    `;
+
     const XQUERY_1 = `
         <NewData>{
             for $op in //OperationalPoint
@@ -86,6 +98,36 @@ describe("Functional tests for the doXQuery Connector Architecture function", ()
 
         // Push XML input
         await source.push(XML_INPUT);
+    });
+
+    test("Asynchronous data input is handle properly", async () => {
+        const source = new SimpleStream<string>();
+        const output = new SimpleStream<string>();
+        const queries: XQuery[] = [
+            {
+                name: "query1",
+                query: XQUERY_1,
+                result: output,
+                path: ""
+            }
+        ];
+
+        let result = "";
+        output.data(data => {
+            result += data;
+        }).on("end", () => {
+            expect(result.startsWith("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")).toBeTruthy();
+            expect(result.includes("<NewOP id=\"EU00001\">")).toBeTruthy();
+            expect(result.includes("<NewOP id=\"BE120353\">")).toBeTruthy();
+        });
+
+        await doXQuery(source, queries);
+
+        // Push data asynchronously
+        await Promise.all([
+            source.push(XML_INPUT),
+            source.push(XML_INPUT2)
+        ]);
     });
 });
 
