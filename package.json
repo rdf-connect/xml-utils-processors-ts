@@ -5,7 +5,7 @@
   "author": "Julián Rojas",
   "scripts": {
     "build": "tsc",
-    "prepublish": "tsc",
+    "prepublishOnly": "tsc",
     "test": "bun test --timeout 15000",
     "watch": "tsc -w"
   },
