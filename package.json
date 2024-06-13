@@ -1,5 +1,5 @@
 {
-  "name": "xml-utils-processors-ts",
+  "name": "@rdfc/xml-utils-processors-ts",
   "version": "0.2.1",
   "type": "module",
   "author": "Julián Rojas",
@@ -18,20 +18,20 @@
     "XML",
     "XQuery",
     "Saxon",
-    "Connector Architecture"
+    "RDF-Connect"
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/julianrojas87/xml-utils-processors-ts.git"
+    "url": "git+https://github.com/rdf-connect/xml-utils-processors-ts.git"
   },
   "dependencies": {
-    "adm-zip": "^0.5.10"
+    "adm-zip": "^0.5.14"
   },
   "devDependencies": {
-    "@ajuvercr/js-runner": "^0.1.12",
+    "@rdfc/js-runner": "^0.2.1",
     "@jest/globals": "^29.7.0",
-    "@types/adm-zip": "^0.5.3",
+    "@types/adm-zip": "^0.5.5",
     "del": "^7.1.0",
-    "typescript": "^5.2.2"
+    "typescript": "^5.4.5"
   }
 }

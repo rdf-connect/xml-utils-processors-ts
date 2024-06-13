@@ -1,5 +1,5 @@
 import { describe, test, expect, afterAll } from "@jest/globals";
-import { SimpleStream } from "@ajuvercr/js-runner";
+import { SimpleStream } from "@rdfc/js-runner";
 import { XQuery, doXQuery } from "../src/XmlUtils";
 import { deleteAsync } from "del";
 
